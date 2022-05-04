@@ -1,0 +1,13 @@
+name: omicsVolcano
+title: omicsVolcano
+username:
+account: songbiaozhu
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6229872
+bundleId: 5868630
+url: https://songbiaozhu.shinyapps.io/omicsVolcano/
+when: 1651660334.6816
+lastSyncTime: 1651660334.6816
+asMultiple: FALSE
+asStatic: FALSE
