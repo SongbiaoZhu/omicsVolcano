@@ -5,4 +5,5 @@ https://songbiaozhu.shinyapps.io/omicsVolcano/
 A web tool to visualize the omics data with volcano. It is developed by using the R language and shiny package.
 
 ## Volcano
-There are static volcano and interactive volcano.
+There is static volcano.
+Interactive volcano is on the way.
