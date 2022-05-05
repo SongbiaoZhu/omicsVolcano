@@ -5,9 +5,9 @@ account: songbiaozhu
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6229872
-bundleId: 5868630
+bundleId: 5871757
 url: https://songbiaozhu.shinyapps.io/omicsVolcano/
-when: 1651660334.6816
-lastSyncTime: 1651660334.6816
+when: 1651719088.87338
+lastSyncTime: 1651719088.87338
 asMultiple: FALSE
 asStatic: FALSE

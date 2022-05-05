@@ -14,15 +14,13 @@ side <- dashboardSidebar(sidebarMenu(
   menuItem(
     "Home",
     tabName = "Home",
-    icon = icon("home",
-                verify_fa = FALSE),
+    icon = icon("home"),
     badgeColor = "green"
   ),
   menuItem(
     "Volcano",
     tabName = "Volcano",
-    icon = icon("bar-chart-o",
-                verify_fa = FALSE)
+    icon = icon("bar-chart-o")
   )
 ))
 
@@ -31,11 +29,9 @@ body <- dashboardBody(tabItems(
     tabName = "Home",
     h2("Welcome to omicsVolcano!"),
     br(),
-    h4(
-      "A volcano plot is a kind of scatter plot which represents differential expression of genes or proteins."
-    ),
-    h4("We typically find the fold change on the x-axis and the p-value on the y-axis."),
-    h4("You can upload your data, visualize with volcano plot online and download the volcano plot."),
+    h4("You can upload your data and visualize it with volcano plot online."),
+    h4("You can also download the volcano plot."),
+    
     br(),
     h3("Required data format:"),
     img(
@@ -125,12 +121,8 @@ body <- dashboardBody(tabItems(
                   value = 0.05
                 )
               ),
-              fluidRow(
-                downloadButton("downloadData1",
-                               "Download table as csv"),
-                downloadButton("downloadPlot1",
-                               "Download plot as pdf")
-              ),
+              fluidRow(downloadButton("downloadData1",
+                                      "Download table"))
             ),
             column(width = 9,
                    fluidRow(plotOutput("p_volcano")),
@@ -180,7 +172,7 @@ shinyApp(
         ))
     )
     
-    volcano <- reactive({
+    output$p_volcano <- renderPlot({
       ggplot(data = data(), aes(x = log2FC,
                                 y = neglogP,
                                 color = regulated)) +
@@ -205,13 +197,8 @@ shinyApp(
           color = "grey",
           size = 0.5
         ) +
-        scale_color_manual(values = manual_colors,
-                           name = NULL) +
+        scale_color_manual(values = manual_colors) +
         ggpubr::theme_pubr()
-    })
-    
-    output$p_volcano <- renderPlot({
-      volcano()
     })
     
     output$table_analysis <- renderDataTable({
@@ -220,31 +207,12 @@ shinyApp(
     
     output$downloadData1 <- downloadHandler(
       filename = function() {
-        paste('Analysis_result_', Sys.Date(), '.csv', sep = '')
+        paste('data1-', Sys.Date(), '.csv', sep = '')
       },
       content = function(con) {
         write.csv(data(), con,
                   row.names = FALSE)
       }
     )
-    
-    output$downloadPlot1 <- downloadHandler(
-      filename = function() {
-        paste0("volcano_plot_", Sys.Date(), ".pdf")
-      },
-      
-      content = function(file) {
-        ggsave(
-          file,
-          volcano(),
-          device = "pdf",
-          width = 8,
-          height = 8,
-          units = "in"
-        )
-      }
-    )
-    
-    
   }
 )
