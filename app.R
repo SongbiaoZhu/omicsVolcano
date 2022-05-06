@@ -42,6 +42,11 @@ body <- dashboardBody(tabItems(
     ),
     br(),
     h3("Required data format:"),
+    h4("fold_change | p_value, are two necessary columns."),
+    h4("Symbol column is needed when you want to label some points."),
+    br(),
+    h4("Example data table is shown below:"),
+    br(),
     img(
       src = "example_data_format_volcano.png",
       width = 512,
@@ -88,20 +93,6 @@ body <- dashboardBody(tabItems(
                 )
               ),
               fluidRow(
-                textInput(
-                  inputId = "variable_X",
-                  label = "X axis:",
-                  value = "foldchange"
-                )
-              ),
-              fluidRow(
-                textInput(
-                  inputId = "variable_Y",
-                  label = "Y axis:",
-                  value = "pvalue"
-                )
-              ),
-              fluidRow(
                 numericInput(
                   inputId = "fc_cut",
                   label = "fold change threashold",
@@ -141,16 +132,16 @@ body <- dashboardBody(tabItems(
                   condition = "input.lable_points=='inputLables'",
                   textInput(
                     inputId = "pointLabels",
-                    label = "Input the corresponding labels",
+                    label = "Input the labels, seperated with ;",
                     value = "VHL;HIF1A;SORT1;OAS2;IFIT3;IFIT1;OASL"
                   )
                 )
               ),
               fluidRow(
                 downloadButton("downloadData1",
-                               "Download table as csv"),
+                               "Download table"),
                 downloadButton("downloadPlot1",
-                               "Download plot as pdf")
+                               "Download plot")
               ),
             ),
             column(width = 9,
@@ -186,20 +177,20 @@ shinyApp(
       })
     })
     
-    analysis_res <- reactive(
+    analysis_res <- reactive({
       uploaded_data() %>%
         dplyr::mutate(log2FC = log2(fold_change)) %>%
         dplyr::mutate(neglogP = -log10(p_value)) %>%
         dplyr::mutate(is_dep = p_value < input$p_cut &
                         abs(log2FC) >= log2(input$fc_cut)) %>%
-        dplyr::mutate(regulated = ifelse(
-          is_dep == TRUE,
-          ifelse(log2FC > log2(input$fc_cut),
-                 "Up",
-                 "Down"),
-          "None"
-        ))
-    )
+        dplyr::mutate(regulated = ifelse(is_dep == TRUE,
+                                         ifelse(
+                                           log2FC > log2(input$fc_cut),
+                                           "Up",
+                                           "Down"
+                                         ),
+                                         "None"))
+    })
     
     volcano <- reactive({
       p <- ggplot(data = analysis_res(), aes(x = log2FC,
@@ -242,7 +233,8 @@ shinyApp(
               size = 3.5,
               box.padding = unit(0.35, "lines"),
               point.padding = unit(0.3, "lines")
-            )
+            ) +
+            guides(colour = "none")
         } else{
           message("Please include the Symbol column in upload dataset for point labels !")
         }
